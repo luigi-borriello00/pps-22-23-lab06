@@ -13,6 +13,7 @@ class ParserTests:
   def parserNTCNE = new BasicParser(Set('X', 'Y', 'Z')) with NotTwoConsecutive[Char] with NonEmpty[Char]
   import u06lab.code.Parsers.charParser
   def sparser: Parser[Char] = "abc".charParser()
+  def parserNMTN = new ShortenThenNParser(Set('a', 'b', 'c'), 3)
 
   @Test
   def testBasicParser =
@@ -43,3 +44,10 @@ class ParserTests:
     assertTrue(sparser.parseAll("aabc".toList))
     assertFalse(sparser.parseAll("aabcdc".toList))
     assertTrue(sparser.parseAll("".toList))
+
+  @Test
+  def testIsShorterThenN =
+    assertTrue(parserNMTN.parseAll("abc".toList))
+    assertFalse(parserNMTN.parseAll("abcd".toList))
+    assertTrue(parserNMTN.parseAll("".toList))
+

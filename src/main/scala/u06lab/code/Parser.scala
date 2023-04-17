@@ -40,12 +40,24 @@ trait NotTwoConsecutive[T] extends Parser[T]:
 
   abstract override def end: Boolean = !isRepeated && super.end
 
-trait ShortenThenN[T](val n: Int) extends Parser[T]:
-  private var counter = 0
-  private var isShorterThenN = true
-
 
 class NotTwoConsecutiveParser(chars: Set[Char]) extends BasicParser(chars)  with NotTwoConsecutive[Char]
+
+trait ShortenThenN[T](val n: Int) extends Parser[T]:
+  private var counter = 0
+  private var isMoreThenN = false
+
+  abstract override def parse(t: T): Boolean =
+    this.counter += 1
+    if this.counter <= this.n then
+      super.parse(t)
+    else
+      this.isMoreThenN = true
+      false
+
+  abstract override def end: Boolean = !this.isMoreThenN && super.end
+
+class ShortenThenNParser(chars: Set[Char], n: Int) extends BasicParser(chars) with ShortenThenN[Char](n)
 
 @main def checkParsers(): Unit =
   def parser = new BasicParser(Set('a', 'b', 'c'))
