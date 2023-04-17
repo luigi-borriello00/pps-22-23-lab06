@@ -22,7 +22,7 @@ class BasicParser(chars: Set[Char]) extends Parser[Char]:
 trait NonEmpty[T] extends Parser[T]:
   private[this] var empty = true
   abstract override def parse(t: T): Boolean =
-    empty = false;
+    empty = false
     super.parse(t) // who is super??
   abstract override def end: Boolean = !empty && super.end
 
@@ -32,8 +32,8 @@ trait NotTwoConsecutive[T] extends Parser[T]:
   private var prev : Option[T] = Option.empty
   private var isRepeated: Boolean = false
   abstract override def parse(t: T): Boolean =
-    if prev.contains(t) then
-      isRepeated = true 
+    if isRepeated || prev.contains(t)then
+      isRepeated = true
       return false
     prev = Some(t)
     super.parse(t)
