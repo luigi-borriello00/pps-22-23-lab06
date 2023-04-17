@@ -40,8 +40,6 @@ class CombinerImpl[A](val unit: A, val f: (A, A) => A) extends Combiner[A]:
   override def combine(a: A, b: A): A =
     f(a, b)
 
-
-
 @main def checkFunctions(): Unit =
   val f: Functions = FunctionsImpl
   println(f.sum(List(10.0, 20.0, 30.1))) // 60.1
