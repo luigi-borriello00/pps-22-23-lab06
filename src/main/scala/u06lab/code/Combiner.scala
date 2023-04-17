@@ -8,9 +8,16 @@ trait Functions:
   def max(a: List[Int]): Int // gives Int.MinValue if a is empty
 
 object FunctionsImpl extends Functions:
-  override def sum(a: List[Double]): Double = ???
-  override def concat(a: Seq[String]): String = ???
-  override def max(a: List[Int]): Int = ???
+  override def sum(a: List[Double]): Double = a match
+    case Nil => 0
+    case h :: t => h + sum(t)
+
+  override def concat(a: Seq[String]): String = a match
+    case Nil => ""
+    case h :: t => h ++ concat(t)
+  override def max(a: List[Int]): Int = a match
+    case Nil => Int.MinValue
+    case h :: t => if h > max(t) then h else max(t)
 
 /*
  * 2) To apply DRY principle at the best,
