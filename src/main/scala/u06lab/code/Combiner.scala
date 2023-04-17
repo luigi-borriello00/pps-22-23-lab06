@@ -19,6 +19,9 @@ object FunctionsImpl extends Functions:
     case Nil => Int.MinValue
     case h :: t => if h > max(t) then h else max(t)
 
+  private def comb[A](l: List[A], combiner: Combiner[A]): A = l match
+    case Nil => combiner.unit
+    case h :: t => combiner.combine(h, comb(t, combiner))
 /*
  * 2) To apply DRY principle at the best,
  * note the three methods in Functions do something similar.
@@ -35,6 +38,11 @@ object FunctionsImpl extends Functions:
 trait Combiner[A]:
   def unit: A
   def combine(a: A, b: A): A
+
+class CombinerImpl[A](val unit: A, val f: (A, A) => A) extends Combiner[A]:
+  override def combine(a: A, b: A): A =
+    f(a, b)
+
 
 @main def checkFunctions(): Unit =
   val f: Functions = FunctionsImpl
