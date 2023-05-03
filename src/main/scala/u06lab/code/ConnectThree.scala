@@ -31,8 +31,7 @@ object ConnectThree extends App:
     board.find(d => d.x == x && d.y == y).map(_.player)
 
   def firstAvailableRow(board: Board, x: Int): Option[Int] =
-    if board.count(_.x == x) > 3 then Option.empty
-    else Option(board.count(_.x == x))
+    if board.count(_.x == x) > 3 then Option.empty else Option(board.count(_.x == x))
 
   def placeAnyDisk(board: Board, player: Player): Seq[Board] =
     for
@@ -41,15 +40,21 @@ object ConnectThree extends App:
     yield board :+ Disk(x, y, player)
 
   def isThereVictory(board:Board, player: Player): Boolean =
-
+    val disks = board.filter(_.player == player)
+    val disksX = disks.map(_.x)
+    val disksY = disks.map(_.y)
+    val disksXY = disks.map(d => d.x + d.y)
+    val disksX_Y = disks.map(d => d.x - d.y)
+    disksX.distinct.size == 1 || disksY.distinct.size == 1 || disksXY.distinct.size == 1 || disksX_Y.distinct.size == 1
 
   def computeAnyGame(player: Player, moves: Int): LazyList[Game] = moves match
-    case 0 => LazyList(List())
+    case 1 => LazyList(List())
     case _ =>
       for
-      game <- computeAnyGame(player.other, moves - 1)
-      board <- if !game.isEmpty then placeAnyDisk(game.head, player) else placeAnyDisk(List(), player)
-    yield board +: game
+        game <- computeAnyGame(player.other, moves - 1)
+        board <- if game.nonEmpty then placeAnyDisk(game.head, player) else placeAnyDisk(List(), player)
+        win = if game.nonEmpty then isThereVictory(game.last, player) else false
+      yield if win then game else board +: game
 
 
 
@@ -89,6 +94,9 @@ object ConnectThree extends App:
     printBoards(g)
     println()
   }
+
+  println(computeAnyGame(O, 4).size)
+
 //  .... .... .... .... ...O
 //  .... .... .... ...X ...X
 //  .... .... ...O ...O ...O
