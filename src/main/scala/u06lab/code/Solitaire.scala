@@ -2,7 +2,7 @@ package u06lab.code
 
 object Solution:
 
-  type Position = (Int, Int)
+  private type Position = (Int, Int)
   type Solution = Seq[Position]
 
   case class Board(w: Int, h: Int):
@@ -27,9 +27,8 @@ object Solution:
 object Solitaire extends App:
   import Solution.*
   private val board = Board(5, 5)
-  private val init = (board.w / 2, board.h / 2)
 
-  def render(solution: Solution, width: Int, height: Int): String =
+  private def render(solution: Solution, width: Int, height: Int): String =
     val reversed = solution.reverse
     val rows =
       for y <- 0 until height
