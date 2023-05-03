@@ -2,42 +2,34 @@ package u06lab.code
 
 object Solution:
 
+  type Position = (Int, Int)
   type Solution = Seq[Position]
 
-  def placeMarks(board: Board)(init: Position): Iterable[Solution] =
-    def placeMarkR(board: Board, n: Int): Iterable[Solution] = n match
-      case 1 => Seq(Seq(init)).view
-      case _ =>
-        for
-          sol <- placeMarkR(board, n - 1)
-          pos <- board.positions
-          if board.isLegal(pos, sol.head) && !sol.contains(pos)
-        yield pos +: sol
-    placeMarkR(board, board.positions.size)
-  case class Position(x: Int, y: Int)
-
   case class Board(w: Int, h: Int):
-    val positions: Seq[Position] = for x <- 0 until w; y <- 0 until h yield Position(x, y)
-    // is legal if the new pos is distant 2 vertically or horizontally from the last pos or 1 diagonally
-    def isLegal(p1: Position, p2: Position): Boolean =
-      (math.abs(p1._1 - p2._1) == 2 && math.abs(p1._2 - p2._2) == 2)
-        || (math.abs(p1._1 - p2._1) == 3 && math.abs(p1._2 - p2._2) == 0)
-        || (math.abs(p1._1 - p2._1) == 0 && math.abs(p1._2 - p2._2) == 3)
+    val positions: Seq[Position] = for x <- 0 until w; y <- 0 until h yield (x, y)
+    def center: Position = (w / 2, h / 2)
 
+  def placeMarks(board: Board)(n: Int): Seq[Solution] = n match
+    case 1 => Seq(Seq(board.center))
+    case _ =>
+      for
+        solution <- placeMarks(board)(n - 1)
+        pos <- board.positions
+        if !solution.contains(pos) && isLegal(solution, pos)
+      yield pos +: solution
 
+  private def isLegal(s: Solution, p: Position): Boolean =
+    s match
+      case Nil => true
+      case last :: _ =>
+        (last._1 - p._1).abs + (last._2 - p._2).abs == 2
 
-/*
-* Ad ogni iterazione, la funzione deve:
-*   - prendere la posizione dell'ultima mossa per ogni Board Precedente
-*   - calcolare le mosse possibili per ogni posizione
-
-* */
 object Solitaire extends App:
   import Solution.*
   private val board = Board(5, 5)
-  private val init = Position(board.w / 2, board.h / 2)
+  private val init = (board.w / 2, board.h / 2)
 
-  def render(solution: Seq[Position], width: Int, height: Int): String =
+  def render(solution: Solution, width: Int, height: Int): String =
     val reversed = solution.reverse
     val rows =
       for y <- 0 until height
@@ -48,7 +40,6 @@ object Solitaire extends App:
     rows.mkString("\n")
 
 
-  private val solutions = placeMarks(board)(init)
-  println(solutions.size)   // 13272
-  for s <- solutions
-    do println(render(solution = s, width = 5, height = 7))
+  private val solutions = placeMarks(board)(13)
+  solutions.foreach(s => println(render(s, board.w, board.h) + "\n"))
+  println(s"Found ${solutions.size} solutions")
