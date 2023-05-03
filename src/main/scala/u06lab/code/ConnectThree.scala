@@ -40,7 +40,18 @@ object ConnectThree extends App:
       y <- firstAvailableRow(board, x)
     yield board :+ Disk(x, y, player)
 
-  def computeAnyGame(player: Player, moves: Int): LazyList[Game] = ???
+  def isThereVictory(board:Board, player: Player): Boolean =
+
+
+  def computeAnyGame(player: Player, moves: Int): LazyList[Game] = moves match
+    case 0 => LazyList(List())
+    case _ =>
+      for
+      game <- computeAnyGame(player.other, moves - 1)
+      board <- if !game.isEmpty then placeAnyDisk(game.head, player) else placeAnyDisk(List(), player)
+    yield board +: game
+
+
 
   def printBoards(game: Seq[Board]): Unit =
     for
@@ -71,7 +82,7 @@ object ConnectThree extends App:
   // ...X .... .... ....
   // ...O ..XO .X.O X..O
 
-  /*
+
   println("EX 3: ")
 // Exercise 3 (ADVANCED!): implement computeAnyGame such that..
   computeAnyGame(O, 4).foreach { g =>
@@ -89,5 +100,5 @@ object ConnectThree extends App:
 // .... .... O... O... O...
 // .... X... X... X... X...
 
+
 // Exercise 4 (VERY ADVANCED!) -- modify the above one so as to stop each game when someone won!!
-*/
