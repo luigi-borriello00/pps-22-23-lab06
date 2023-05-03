@@ -56,8 +56,6 @@ object ConnectThree extends App:
         win = if game.nonEmpty then isThereVictory(game.last, player) else false
       yield if win then game else board +: game
 
-
-
   def printBoards(game: Seq[Board]): Unit =
     for
       y <- bound to 0 by -1
@@ -68,25 +66,6 @@ object ConnectThree extends App:
       if x == bound then
         print(" ")
         if board == game.head then println()
-
-  // Exercise 1: implement find such that..
-  println("EX 1: ")
-  println(find(List(Disk(0, 0, X)), 0, 0)) // Some(X)
-  println(find(List(Disk(0, 0, X), Disk(0, 1, O), Disk(0, 2, X)), 0, 1)) // Some(O)
-  println(find(List(Disk(0, 0, X), Disk(0, 1, O), Disk(0, 2, X)), 1, 1)) // None
-
-  // Exercise 2: implement placeAnyDisk such that..
-  printBoards(placeAnyDisk(List(), X))
-  // .... .... .... ....
-  // .... .... .... ....
-  // .... .... .... ....
-  // ...X ..X. .X.. X...
-  printBoards(placeAnyDisk(List(Disk(0, 0, O)), X))
-  // .... .... .... ....
-  // .... .... .... ....
-  // ...X .... .... ....
-  // ...O ..XO .X.O X..O
-
 
   println("EX 3: ")
 // Exercise 3 (ADVANCED!): implement computeAnyGame such that..
